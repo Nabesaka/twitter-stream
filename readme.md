@@ -3,7 +3,7 @@ Contributors: Paul B Robinson
 Donate link: http://return-true.com/donate/  
 Tags: twitter, timeline, tweets  
 Requires at least: 2.8  
-Tested up to: 4.5
+Tested up to: 4.5  
 Stable tag: 2.7
 
 Twitter Stream is a very simple Twitter plugin designed to show a users Twitter timeline. Also includes file caching to stop API overuse.
