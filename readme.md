@@ -3,14 +3,14 @@ Contributors: Paul B Robinson
 Donate link: http://return-true.com/donate/  
 Tags: twitter, timeline, tweets  
 Requires at least: 2.8  
-Tested up to: 4.5  
-Stable tag: 2.7
+Tested up to: 4.6
+Stable tag: 2.7.1
 
 Twitter Stream is a very simple Twitter plugin designed to show a users Twitter timeline. Also includes file caching to stop API overuse.
 
 ## Description ##
 
-oAuth is now functioning correctly. After installing go to "Settings" -> "Twitter Stream" and follow the instructions to get started.
+THIS PLUGIN IS NO LONGER UPDATED EXCEPT FOR CRITICAL UPDATES AND/OR BUG FIXES. PLEASE CHECK OUT MY OTHER PLUGIN [AOI TORI](https://wordpress.org/plugins/aoi-tori/) INSTEAD.
 
 Twitter Stream is a simple plugin designed to simply show a users Twitter timeline. It includes file caching to stop overuse of Twitter's API. You can also choose how many updates to return (maximum of 200). It also includes autolinking for URL's found within the timeline. Also includes a date ago feature, showing the time the tweet was posted in xx ago format. Also has a permalink pointing to the tweet.
 
@@ -78,6 +78,9 @@ To make it easier for me to answer questions & to keep everything in one place, 
 I'm happy to help however I can. You can get in touch via my [website](http://return-true.com), or if it can be said in 140 characters I'm on Twitter as [@paulbrobinson](http://twitter.com/paulbrobinson). I promise to get back to you as soon as I can.
 
 ## Changelog ##
+
+### 2.7.1 ###
+* Added PHP 5.5 compat to regex (thanks to Brandon from PixelJar), also added some minor error checking to stop crashes when errors are sent back from Twitter. Last update (except for bug fixes) plugin please consider changing to Aoi Tori my new Twitter plugin that I am actively maintaining. 
 
 ### 2.7 ###
 * Updated tested to tag.

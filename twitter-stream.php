@@ -3,7 +3,7 @@
 Plugin Name: Twitter Stream
 Plugin URI: http://return-true.com/
 Description: A simple Twitter plugin designed to show the provided username's Twitter updates. Includes file caching to prevent API overuse.
-Version: 2.7
+Version: 2.7.1
 Author: Paul Robinson
 Author URI: http://return-true.com
 
@@ -297,13 +297,22 @@ function twitter_stream($args = FALSE) {
 
 	$tweetfollow = twitter_stream_parse_tweets($content, $r);
 
+	if(isset($tweetfollow['error'])) {
+		echo '<strong>Twitter Sent An Error:</strong> ' . $tweetfollow['error'];
+		return false;
+	}
+
 	$output = $tweetfollow[0];
 
 	//Now let's do some highlighting & auto linking.
 	//Find all the @replies and place them in a span so CSS can be used to highlight them.
-	$output = preg_replace('~(\@[a-z0-9_]+)~ise', "'<span class=\"at-reply\"><a href=\"http://twitter.com/'.substr('$1', 1).'\" title=\"View '.substr('$1', 1).'\'s profile\">$1</a></span>'", $output);
+	//$output = preg_replace('~(\@[a-z0-9_]+)~ise', "'<span class=\"at-reply\"><a href=\"http://twitter.com/'.substr('$1', 1).'\" title=\"View '.substr('$1', 1).'\'s profile\">$1</a></span>'", $output);
+	//PHP 5.5 Compat thanks to Brandon @ PixelJar
+	$output = preg_replace_callback( '~(\@[a-z0-9_]+)~is', 'twitter_stream_reply_wrap', $output );
 	//Find all the #tags and place them in a span so CSS can be used to highlight them.
-	$output = preg_replace('~(\#[a-z0-9_]+)~ise', "'<span class=\"hash-tag\"><a href=\"http://twitter.com/search?q='.urlencode('$1').'\" title=\"Search for $1 on Twitter\">$1</a></span>'", $output);
+	//$output = preg_replace('~(\#[a-z0-9_]+)~ise', "'<span class=\"hash-tag\"><a href=\"http://twitter.com/search?q='.urlencode('$1').'\" title=\"Search for $1 on Twitter\">$1</a></span>'", $output);
+	//PHP 5.5 Compat thanks to Brandon @ PixelJar
+	$output = preg_replace_callback( '~(\#[a-z0-9_]+)~is', 'twitter_stream_hashtag_wrap', $output );
 
 	//Show follower count
 	if($r['show_followers']) {
@@ -316,6 +325,24 @@ function twitter_stream($args = FALSE) {
 
 	echo '<div class="twitter-stream">'.$output.'</div>';
 
+}
+
+function twitter_stream_reply_wrap( $match ) {
+	return sprintf(
+		'<span class="at-reply"><a href="http://twitter.com/%s" title="View %s\'s profile">%s</a></span>',
+		esc_attr( substr( $match[1], 1 ) ),
+		esc_attr( substr( $match[1], 1 ) ),
+		esc_html( $match[1] )
+	);
+}
+
+function twitter_stream_hashtag_wrap( $match ) {
+	return sprintf(
+		'<span class="hash-tag"><a href="http://twitter.com/search?q=%s" title="Search for %s on Twitter">%s</a></span>',
+		esc_attr( urlencode( $match[1] ) ),
+		esc_html( $match[1] ),
+		esc_html( $match[1] )
+	);
 }
 
 function twitter_stream_cache($modtime, $cache_path, $cache_time) {
@@ -365,8 +392,13 @@ function twitter_stream_delete_cache() {
 //parse tweets
 function twitter_stream_parse_tweets($content, $r) {
 
+	//Check if content is empty
 	if(!$content)
 		return false;
+
+	//Check for a error returned from Twitter
+	if(isset($content->errors))
+		return array( 'error' => $content->errors[0]->message );
 
 	$followers = $content[0]->user->followers_count;
 	$username = $content[0]->user->screen_name;
